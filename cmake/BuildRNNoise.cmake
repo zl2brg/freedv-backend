@@ -55,7 +55,7 @@ add_custom_target(
 
 include_directories(${SOURCE_DIR}/include)
 
-add_library(rnnoise STATIC IMPORTED)
+add_library(rnnoise STATIC IMPORTED GLOBAL)
 add_dependencies(rnnoise librnnoise.a)
 set_target_properties(rnnoise PROPERTIES
     IMPORTED_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/librnnoise${CMAKE_STATIC_LIBRARY_SUFFIX}"
@@ -87,7 +87,7 @@ ExternalProject_Add(build_rnnoise
 
 ExternalProject_Get_Property(build_rnnoise BINARY_DIR)
 ExternalProject_Get_Property(build_rnnoise SOURCE_DIR)
-add_library(rnnoise STATIC IMPORTED)
+add_library(rnnoise STATIC IMPORTED GLOBAL)
 add_dependencies(rnnoise build_rnnoise)
 
 add_library(rnnoise_inc INTERFACE)

@@ -8,10 +8,15 @@ include(ExternalProject)
 ExternalProject_Add(build_rade
    SOURCE_DIR rade_src
    BINARY_DIR rade_build
-   GIT_REPOSITORY https://github.com/peterbmarks/radae_nopy/
+   GIT_REPOSITORY https://github.com/zl2brg/radae_nopy/
    GIT_TAG main
+   GIT_SHALLOW 1
    GIT_SUBMODULES ""
    GIT_SUBMODULES_RECURSE NO
+   # Check out once; skip the per-build "git fetch" update step. This avoids
+   # network access (and offline build failures) on every rebuild. To force a
+   # refresh, remove build/deps/freedv-backend/build_rade-prefix/src/build_rade-stamp.
+   UPDATE_DISCONNECTED 1
    CMAKE_ARGS ${RADE_CMAKE_ARGS}
    CMAKE_CACHE_ARGS -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET} -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
    INSTALL_COMMAND ""
@@ -19,7 +24,7 @@ ExternalProject_Add(build_rade
 
 ExternalProject_Get_Property(build_rade BINARY_DIR)
 ExternalProject_Get_Property(build_rade SOURCE_DIR)
-add_library(rade SHARED IMPORTED)
+add_library(rade SHARED IMPORTED GLOBAL)
 add_dependencies(rade build_rade)
 include_directories(${SOURCE_DIR}/src)
 target_include_directories(rade INTERFACE ${SOURCE_DIR}/src)
@@ -32,7 +37,7 @@ list(APPEND FREEDV_PACKAGE_SEARCH_PATHS ${BINARY_DIR}/src)
 set(rade_BINARY_DIR ${BINARY_DIR})
 set(rade_SOURCE_DIR ${SOURCE_DIR})
 
-add_library(opus STATIC IMPORTED)
+add_library(opus STATIC IMPORTED GLOBAL)
 add_dependencies(opus build_rade)
 set(FARGAN_ARM_CONFIG_H_FILE "${BINARY_DIR}/build_opus_arm-prefix/src/build_opus_arm/config.h")
 set(FARGAN_X86_CONFIG_H_FILE "${BINARY_DIR}/build_opus_x86-prefix/src/build_opus_x86/config.h")
