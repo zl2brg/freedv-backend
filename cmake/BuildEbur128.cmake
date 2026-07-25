@@ -22,7 +22,9 @@ ExternalProject_Add(build_ebur128
    GIT_SUBMODULES_RECURSE NO
    CMAKE_ARGS ${EBUR128_CMAKE_ARGS}
    CMAKE_CACHE_ARGS -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET} -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
-   PATCH_COMMAND git apply ${CMAKE_CURRENT_SOURCE_DIR}/cmake/Ebur128_CMake.patch
+   # Idempotent: skip if already applied (ExternalProject re-runs PATCH on rebuild).
+   PATCH_COMMAND ${CMAKE_COMMAND} -E env
+                 bash -c "git apply --check \"${CMAKE_CURRENT_SOURCE_DIR}/cmake/Ebur128_CMake.patch\" 2>/dev/null && git apply \"${CMAKE_CURRENT_SOURCE_DIR}/cmake/Ebur128_CMake.patch\" || true"
    INSTALL_COMMAND ""
    UPDATE_DISCONNECTED 1
 )
