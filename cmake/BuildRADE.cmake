@@ -8,6 +8,10 @@ include(ExternalProject)
 ExternalProject_Add(build_rade
    SOURCE_DIR rade_src
    BINARY_DIR rade_build
+   CMAKE_GENERATOR "Unix Makefiles"
+   BUILD_BYPRODUCTS
+       "${CMAKE_CURRENT_BINARY_DIR}/rade_build/src/librade${CMAKE_SHARED_LIBRARY_SUFFIX}"
+       "${CMAKE_CURRENT_BINARY_DIR}/rade_build/build_opus-prefix/src/build_opus/.libs/libopus${CMAKE_STATIC_LIBRARY_SUFFIX}"
    GIT_REPOSITORY https://github.com/freedv/rade_c.git
    GIT_TAG main
    GIT_SHALLOW 1
@@ -19,6 +23,7 @@ ExternalProject_Add(build_rade
    UPDATE_DISCONNECTED 1
    CMAKE_ARGS ${RADE_CMAKE_ARGS}
    CMAKE_CACHE_ARGS -DCMAKE_BUILD_TYPE:STRING=Release -DCMAKE_OSX_DEPLOYMENT_TARGET:STRING=${CMAKE_OSX_DEPLOYMENT_TARGET} -DCMAKE_OSX_ARCHITECTURES:STRING=${CMAKE_OSX_ARCHITECTURES}
+   BUILD_COMMAND make rade
    INSTALL_COMMAND ""
 )
 
@@ -30,8 +35,8 @@ include_directories(${SOURCE_DIR}/src)
 target_include_directories(rade INTERFACE ${SOURCE_DIR}/src)
 
 set_target_properties(rade PROPERTIES
-    IMPORTED_LOCATION "${BINARY_DIR}/src/librade${CMAKE_SHARED_LIBRARY_SUFFIX}"
-    IMPORTED_IMPLIB   "${BINARY_DIR}/src/librade${CMAKE_IMPORT_LIBRARY_SUFFIX}"
+    IMPORTED_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/rade_build/src/librade${CMAKE_SHARED_LIBRARY_SUFFIX}"
+    IMPORTED_IMPLIB   "${CMAKE_CURRENT_BINARY_DIR}/rade_build/src/librade${CMAKE_IMPORT_LIBRARY_SUFFIX}"
 )
 list(APPEND FREEDV_PACKAGE_SEARCH_PATHS ${BINARY_DIR}/src)
 set(rade_BINARY_DIR ${BINARY_DIR})
@@ -74,7 +79,7 @@ include_directories(SYSTEM
     ${BINARY_DIR}/build_opus-prefix/src/build_opus/silk
     ${BINARY_DIR}/build_opus-prefix/src/build_opus/include)
 set_target_properties(opus PROPERTIES
-    IMPORTED_LOCATION "${BINARY_DIR}/build_opus-prefix/src/build_opus/.libs/libopus${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    IMPORTED_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/rade_build/build_opus-prefix/src/build_opus/.libs/libopus${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
 set(FARGAN_CONFIG_H_FILE "${BINARY_DIR}/build_opus-prefix/src/build_opus/config.h")
 set(FARGAN_ARM_CONFIG_H_FILE "${FARGAN_CONFIG_H_FILE}")

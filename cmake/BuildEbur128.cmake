@@ -16,6 +16,7 @@ include(ExternalProject)
 ExternalProject_Add(build_ebur128
    SOURCE_DIR ebur128_src
    BINARY_DIR ebur128_build
+   BUILD_BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/ebur128_build/libebur128${CMAKE_STATIC_LIBRARY_SUFFIX}"
    GIT_REPOSITORY https://github.com/jiixyj/libebur128.git
    GIT_TAG "v${EBUR128_VERSION}"
    GIT_SUBMODULES ""
@@ -32,11 +33,11 @@ ExternalProject_Get_Property(build_ebur128 SOURCE_DIR)
 add_library(ebur128 STATIC IMPORTED)
 add_dependencies(ebur128 build_ebur128)
 
-set(LIBEBUR128 "${BINARY_DIR}/libebur128${CMAKE_STATIC_LIBRARY_SUFFIX}")
+set(LIBEBUR128 "${CMAKE_CURRENT_BINARY_DIR}/ebur128_build/libebur128${CMAKE_STATIC_LIBRARY_SUFFIX}")
 
 set_target_properties(ebur128 PROPERTIES
     IMPORTED_LOCATION ${LIBEBUR128}
-    IMPORTED_IMPLIB   "${BINARY_DIR}/libebur128${CMAKE_IMPORT_LIBRARY_SUFFIX}"
+    IMPORTED_IMPLIB   "${CMAKE_CURRENT_BINARY_DIR}/ebur128_build/libebur128${CMAKE_IMPORT_LIBRARY_SUFFIX}"
 )
 
 set(EBUR128_INCLUDE_DIRS ${CMAKE_CURRENT_BINARY_DIR}/ebur128_src/ebur128 ${CMAKE_CURRENT_BINARY_DIR}/ebur128_build)

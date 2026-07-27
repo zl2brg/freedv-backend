@@ -21,7 +21,7 @@ ExternalProject_Add(build_rnnoise_x86
     DOWNLOAD_EXTRACT_TIMESTAMP NO
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ${CONFIGURE_COMMAND} --enable-x86-rtcd --host=x86_64-apple-darwin --target=x86_64-apple-darwin CFLAGS=-arch\ x86_64\ -O2\ ${RNNOISE_APPLE_MIN_BUILD}
-    BUILD_COMMAND $(MAKE)
+    BUILD_COMMAND make
     INSTALL_COMMAND ""
     GIT_REPOSITORY ${RNNOISE_REPO}
     GIT_TAG main
@@ -31,7 +31,7 @@ ExternalProject_Add(build_rnnoise_arm
     DOWNLOAD_EXTRACT_TIMESTAMP NO
     BUILD_IN_SOURCE 1
     CONFIGURE_COMMAND ${CONFIGURE_COMMAND} --host=aarch64-apple-darwin --target=aarch64-apple-darwin CFLAGS=-arch\ arm64\ -O2\ ${RNNOISE_APPLE_MIN_BUILD}
-    BUILD_COMMAND $(MAKE)
+    BUILD_COMMAND make
     INSTALL_COMMAND ""
     GIT_REPOSITORY ${RNNOISE_REPO}
     GIT_TAG main
@@ -77,8 +77,9 @@ endif(APPLE)
 
 ExternalProject_Add(build_rnnoise
     BUILD_IN_SOURCE 1
+    BUILD_BYPRODUCTS "${CMAKE_CURRENT_BINARY_DIR}/build_rnnoise-prefix/src/build_rnnoise/.libs/librnnoise${CMAKE_STATIC_LIBRARY_SUFFIX}"
     CONFIGURE_COMMAND ${CONFIGURE_COMMAND}
-    BUILD_COMMAND $(MAKE)
+    BUILD_COMMAND make
     INSTALL_COMMAND ""
     GIT_REPOSITORY ${RNNOISE_REPO}
     GIT_TAG main
@@ -94,8 +95,8 @@ add_library(rnnoise_inc INTERFACE)
 target_include_directories(rnnoise_inc INTERFACE ${SOURCE_DIR}/include)
 
 set_target_properties(rnnoise PROPERTIES
-    IMPORTED_LOCATION "${BINARY_DIR}/.libs/librnnoise${CMAKE_STATIC_LIBRARY_SUFFIX}"
-    IMPORTED_IMPLIB   "${BINARY_DIR}/.libs/librnnoise${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    IMPORTED_LOCATION "${CMAKE_CURRENT_BINARY_DIR}/build_rnnoise-prefix/src/build_rnnoise/.libs/librnnoise${CMAKE_STATIC_LIBRARY_SUFFIX}"
+    IMPORTED_IMPLIB   "${CMAKE_CURRENT_BINARY_DIR}/build_rnnoise-prefix/src/build_rnnoise/.libs/librnnoise${CMAKE_STATIC_LIBRARY_SUFFIX}"
 )
 
 include_directories(${SOURCE_DIR}/include)
